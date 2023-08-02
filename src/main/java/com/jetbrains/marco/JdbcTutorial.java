@@ -3,15 +3,22 @@ package com.jetbrains.marco;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.time.LocalDateTime;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class JdbcTutorial {
 
+    static final String JDBC_URL = "jdbc:h2:mem:;INIT=RUNSCRIPT FROM 'classpath:users.sql'";
+
     public static void main(String[] args) {
 
+        // preferable to use a data source withing a connection pool
         DataSource dataSource = createDataSource();
 
+//        try (Connection connection = DriverManager.getConnection(JDBC_URL)) {
         try (Connection connection = dataSource.getConnection()) {
             System.out.println("connection.isValid(0) = " + connection.isValid(0));
 
@@ -58,7 +65,7 @@ public class JdbcTutorial {
 
     private static DataSource createDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:h2:mem:;INIT=RUNSCRIPT FROM 'classpath:users.sql'");
+        ds.setJdbcUrl(JDBC_URL);
         return ds;
     }
 }
